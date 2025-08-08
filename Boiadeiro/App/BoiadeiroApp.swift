@@ -6,12 +6,14 @@
 //
 
 import SwiftUI
+import SwiftData
 
 @main
 struct BoiadeiroApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            TabBar()
         }
+        .modelContainer(for: Batch.self)
     }
 }
