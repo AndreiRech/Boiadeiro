@@ -3,6 +3,11 @@ import SwiftUI
 struct BatchesEmptyState: View {
     @Binding var addBatch: Bool
     
+    let title: String
+    let description: String
+    let buttonText: String?
+    let buttonImage: String?
+    
     var body: some View {
         VStack(spacing: 0) {
             VStack(spacing: 16) {
@@ -11,12 +16,12 @@ struct BatchesEmptyState: View {
                     .frame(width: 142, height: 187)
                 
                 VStack(spacing: 4) {
-                    Text("Ainda não há nenhum lote")
+                    Text(title)
                         .font(.title2)
                         .fontWeight(.bold)
                         .foregroundStyle(.primary)
                     
-                    Text("Adicione um lote para saber quais são seus detalhes!")
+                    Text(description)
                         .multilineTextAlignment(.center)
                         .padding(.horizontal, 24)
                         .foregroundStyle(.primary)
@@ -25,27 +30,25 @@ struct BatchesEmptyState: View {
             
             Spacer()
             
-            Button {
-                addBatch.toggle()
-            } label: {
-                HStack(spacing: 4) {
-                    Image(systemName: "plus")
-            
-                    Text("Adicionar Lote")
+            if let buttonText = buttonText, let buttonImage = buttonImage {
+                Button {
+                    addBatch.toggle()
+                } label: {
+                    HStack(spacing: 4) {
+                        Image(systemName: buttonImage)
+                
+                        Text(buttonText)
+                    }
+                    .foregroundColor(Color(.systemBackground))
                 }
-                .foregroundColor(Color(.systemBackground))
+                .padding(.horizontal, 20)
+                .padding(.vertical, 14)
+                .background(
+                    RoundedRectangle(cornerRadius: 12)
+                        .fill(.green)
+                )
             }
-            .padding(.horizontal, 20)
-            .padding(.vertical, 14)
-            .background(
-                RoundedRectangle(cornerRadius: 12)
-                    .fill(.green)
-            )
         }
         .padding(.horizontal, 48)
     }
-}
-
-#Preview {
-    BatchesEmptyState(addBatch: .constant(true))
 }

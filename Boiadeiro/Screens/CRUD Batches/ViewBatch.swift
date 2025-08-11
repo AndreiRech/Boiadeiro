@@ -25,6 +25,7 @@ struct ViewBatch: View {
     @State private var aditionalExit: String = ""
     
     @State var addNewWeight: Bool = false
+    @State var editBatch: Bool = false
     
     var batch: Batch
     
@@ -64,6 +65,7 @@ struct ViewBatch: View {
                     RoundedRectangle(cornerRadius: 12)
                         .fill(.green)
                 )
+                .padding(.top, 16)
                 
                 Spacer()
             }
@@ -75,20 +77,9 @@ struct ViewBatch: View {
             .toolbarBackgroundVisibility(.visible, for: .navigationBar)
             .background(Color(.secondarySystemBackground))
             .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button {
-                        dismiss()
-                    } label: {
-                        HStack {
-                            Image(systemName: "chevron.left")
-                            Text("Voltar")
-                        }
-                    }
-                }
-                
                 ToolbarItem(placement: .primaryAction) {
                     Button {
-                        addNewWeight.toggle()
+                        editBatch.toggle()
                     } label: {
                         Image(systemName: "pencil.circle.fill")
                     }
@@ -122,6 +113,11 @@ struct ViewBatch: View {
             }
             .sheet(isPresented: $addNewWeight) {
                 NewWeightBatch(batch: batch)
+            }
+            .sheet(isPresented: $editBatch, onDismiss: {
+                try? modelContext.save()
+            }) {
+                UseBatch(batch: batch)
             }
         }
     }

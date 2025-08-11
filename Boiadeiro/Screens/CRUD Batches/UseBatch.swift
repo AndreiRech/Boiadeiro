@@ -65,28 +65,91 @@ struct UseBatch: View {
                 }
                 
                 ToolbarItem(placement: .topBarTrailing) {
-                    let isDisabled: Bool = name == ""
-                    || numberOfAnimals == ""
-                    || entranceWeight == ""
-                    || aquisitionCost == ""
-                    || salePrice == ""
-                    || foodCost == ""
+                    var isDisabled: Bool {
+                        if isEditing {
+                            return name.isEmpty
+                                || numberOfAnimals.isEmpty
+                                || entranceWeight.isEmpty
+                                || aquisitionCost.isEmpty
+                                || salePrice.isEmpty
+                                || foodCost.isEmpty
+                                || atualWeight.isEmpty
+                                || totalCorpseWeight.isEmpty
+                                || aditionalEntrance.isEmpty
+                                || aditionalExit.isEmpty
+                        } else {
+                            return name.isEmpty
+                                || numberOfAnimals.isEmpty
+                                || entranceWeight.isEmpty
+                        }
+                    }
                     
                     Button("Salvar") {
                         if let newNumberOfAnimals = Int(numberOfAnimals),
-                           let newEntranceWeight = Double(entranceWeight.replacingOccurrences(of: ",", with: ".")),
-                           let newAquisitionCost = Double(aquisitionCost.replacingOccurrences(of: ",", with: ".")),
-                           let newSalePrice = Double(salePrice.replacingOccurrences(of: ",", with: ".")),
-                           let newFoodCost = Double(foodCost.replacingOccurrences(of: ",", with: ".")) {
-                            let batch = Batch(id: UUID(), name: self.name, numberOfAnimals: newNumberOfAnimals, entryDate: entryDate, exitDate: exitDate == entryDate ? exitDate+90 : exitDate, entraceWeight: newEntranceWeight, aquisitionCost: newAquisitionCost, salePrice: newSalePrice, foodCost: newFoodCost)
-                            modelContext.insert(batch)
-                            try? modelContext.save()
+                           let newEntranceWeight = entranceWeight.toDouble {
+
+                            if let batch,
+                                let newAquisitionCost = aquisitionCost.toDouble,
+                                let newSalePrice = salePrice.toDouble,
+                                let newFoodCost = foodCost.toDouble,
+                                let newAtualWeight = atualWeight.toDouble,
+                                let newTotalCorpseWeight = totalCorpseWeight.toDouble,
+                                let newAditionalEntrance = aditionalEntrance.toDouble,
+                                let newAditionalExit = aditionalExit.toDouble {
+
+                                batch.name = self.name
+                                batch.numberOfAnimals = newNumberOfAnimals
+                                batch.entryDate = self.entryDate
+                                batch.exitDate = self.exitDate
+                                batch.entraceWeight = newEntranceWeight
+                                batch.aquisitionCost = newAquisitionCost
+                                batch.salePrice = newSalePrice
+                                batch.foodCost = newFoodCost
+                                batch.atualWeights.append(newAtualWeight)
+                                batch.totalCorpseWeight = newTotalCorpseWeight
+                                batch.aditionalEntrance = newAditionalEntrance
+                                batch.aditionalExit = newAditionalExit
+                                
+//                                try? modelContext.save()
+                            } else {
+                                let newBatch = Batch(
+                                    name: self.name,
+                                    numberOfAnimals: newNumberOfAnimals,
+                                    entryDate: self.entryDate,
+                                    exitDate: self.exitDate,
+                                    entraceWeight: newEntranceWeight,
+                                    aquisitionCost: aquisitionCost.isEmpty ? nil : aquisitionCost.toDouble,
+                                    salePrice: salePrice.isEmpty ? nil : salePrice.toDouble,
+                                    foodCost: foodCost.isEmpty ? nil : foodCost.toDouble
+                                )
+
+                                modelContext.insert(newBatch)
+                                try? modelContext.save()
+                            }
                             dismiss()
                         }
+
                     }
                     .disabled(isDisabled)
                     .fontWeight(.bold)
                 }
+            }
+            .onAppear {
+                guard let batch = self.batch else { return }
+                
+                self.name = batch.name
+                self.numberOfAnimals = String(batch.numberOfAnimals)
+                self.entryDate = batch.entryDate
+                self.exitDate = batch.exitDate
+                self.entranceWeight = String(batch.entraceWeight)
+                self.aquisitionCost = String(batch.aquisitionCost)
+                self.salePrice = String(batch.salePrice)
+                self.foodCost = String(batch.foodCost)
+                
+                self.atualWeight = String(batch.atualWeights.last ?? batch.entraceWeight)
+                self.totalCorpseWeight = String(batch.totalCorpseWeight ?? 0)
+                self.aditionalEntrance = String(batch.aditionalEntrance ?? 0)
+                self.aditionalExit = String(batch.aditionalExit ?? 0)
             }
         }
     }

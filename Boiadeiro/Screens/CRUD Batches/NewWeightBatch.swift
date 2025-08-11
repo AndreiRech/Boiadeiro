@@ -20,7 +20,7 @@ struct NewWeightBatch: View {
     var body: some View {
         NavigationStack {
             VStack(spacing: 16) {
-                LimitedTextField(text: $atualWeight, title: "Peso Total Entrada", placeholder: "Ex: 1234 Kg", isNumeric: true, isDisabled: true, characterLimit: nil)
+                LimitedTextField(text: $entranceWeight, title: "Peso Total Entrada", placeholder: "Ex: 1234 Kg", isNumeric: true, isDisabled: true, characterLimit: nil)
                 
                 LimitedTextField(text: $atualWeight, title: "Peso Atual", placeholder: "Ex: 2345 Kg", isNumeric: true, isDisabled: true, characterLimit: nil)
                 
@@ -47,7 +47,7 @@ struct NewWeightBatch: View {
                 }
                 
                 ToolbarItem(placement: .topBarTrailing) {
-                    let isDisabled: Bool = newWeight != ""
+                    let isDisabled: Bool = newWeight == ""
                     
                     Button("Salvar") {
                         if let newWeightDouble = Double(newWeight) {
