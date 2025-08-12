@@ -21,7 +21,7 @@ struct TabBar: View {
                     .tag(0)
                     
                     NavigationStack {
-                        Statistics()
+                        Statistics(selectedTab: $selectedTabIndex)
                     }
                     .tabItem {
                         Image(systemName: "chart.bar.fill")
@@ -42,7 +42,7 @@ struct TabBar: View {
         }
         .animation(.easeInOut(duration: 1), value: showSplash)
         .onAppear {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
                 withAnimation {
                     self.showSplash = false
                 }

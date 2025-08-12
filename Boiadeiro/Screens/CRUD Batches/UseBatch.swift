@@ -109,8 +109,6 @@ struct UseBatch: View {
                                 batch.totalCorpseWeight = newTotalCorpseWeight
                                 batch.aditionalEntrance = newAditionalEntrance
                                 batch.aditionalExit = newAditionalExit
-                                
-//                                try? modelContext.save()
                             } else {
                                 let newBatch = Batch(
                                     name: self.name,

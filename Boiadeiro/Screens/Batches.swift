@@ -24,11 +24,6 @@ struct Batches: View {
                 BatchesEmptyState(addBatch: $addBatch, title: "Ainda não há nenhum lote", description: "Adicione um lote para saber quais são seus detalhes!", buttonText: "Adicionar Lote", buttonImage: "plus")
                     .padding(.top, 64)
                     .padding(.bottom, 40)
-//            } else if filteredBatches.isEmpty {
-//                BatchesEmptyState(addBatch: $addBatch, title: "Nenhum lote filtrado", description: "Pesquise por outro nome de lote para encontrá-lo rapidamente!", buttonText: nil, buttonImage: nil)
-//                    .padding(.top, 64)
-//                    .padding(.bottom, 40)
-//                    .searchable(text: $searchText, prompt: "Buscar lotes")
             } else {
                 List(filteredBatches) { batch in
                     BatchView(batch: batch)
@@ -40,6 +35,14 @@ struct Batches: View {
                         }
                     }
                     .onTapGesture { navigateToBatch = batch }
+                    .onChange(of: batch.isActive) { _, newValue in
+                        if newValue {
+                            for other in filteredBatches where other.id != batch.id && other.isActive {
+                                other.isActive = false
+                            }
+                            try? modelContext.save()
+                        }
+                    }
                 }
                 .scrollContentBackground(.hidden)
                 .listStyle(.insetGrouped)

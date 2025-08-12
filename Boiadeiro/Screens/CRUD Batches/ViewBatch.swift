@@ -1,28 +1,8 @@
-//
-//  ViewBatch.swift
-//  Boiadeiro
-//
-//  Created by Andrei Rech on 08/08/25.
-//
-
 import SwiftUI
 
 struct ViewBatch: View {
     @Environment(\.dismiss) var dismiss
     @Environment(\.modelContext) var modelContext
-    
-    @State private var name: String = ""
-    @State private var numberOfAnimals: String = ""
-    @State private var entryDate: Date = Date()
-    @State private var exitDate: Date = Date()
-    @State private var entranceWeight: String = ""
-    @State private var aquisitionCost: String = ""
-    @State private var salePrice: String = ""
-    @State private var foodCost: String = ""
-    @State private var atualWeight: String = ""
-    @State private var totalCorpseWeight: String = ""
-    @State private var aditionalEntrance: String = ""
-    @State private var aditionalExit: String = ""
     
     @State var addNewWeight: Bool = false
     @State var editBatch: Bool = false
@@ -33,18 +13,18 @@ struct ViewBatch: View {
         NavigationStack {
             ScrollView(showsIndicators: false) {
                 BatchFields(
-                    name: $name,
-                    numberOfAnimals: $numberOfAnimals,
-                    entryDate: $entryDate,
-                    exitDate: $exitDate,
-                    entranceWeight: $entranceWeight,
-                    aquisitionCost: $aquisitionCost,
-                    salePrice: $salePrice,
-                    foodCost: $foodCost,
-                    atualWeight: $atualWeight,
-                    totalCorpseWeight: $totalCorpseWeight,
-                    aditionalEntrance: $aditionalEntrance,
-                    aditionalExit: $aditionalExit,
+                    name: .constant(batch.name),
+                    numberOfAnimals: .constant(String(batch.numberOfAnimals)),
+                    entryDate: .constant(batch.entryDate),
+                    exitDate: .constant(batch.exitDate),
+                    entranceWeight: .constant(String(batch.entraceWeight)),
+                    aquisitionCost: .constant(String(batch.aquisitionCost)),
+                    salePrice: .constant(String(batch.salePrice)),
+                    foodCost: .constant(String(batch.foodCost)),
+                    atualWeight: .constant(String(batch.atualWeights.last ?? batch.entraceWeight)),
+                    totalCorpseWeight: .constant(String(batch.totalCorpseWeight ?? 0)),
+                    aditionalEntrance: .constant(String(batch.aditionalEntrance ?? 0)),
+                    aditionalExit: .constant(String(batch.aditionalExit ?? 0)),
                     showExtraFields: true,
                     isReadOnly: true
                 )
@@ -71,7 +51,7 @@ struct ViewBatch: View {
             }
             .padding()
             .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .navigationTitle($name)
+            .navigationTitle(batch.name)
             .navigationBarTitleDisplayMode(.large)
             .toolbarBackground(Color(.secondarySystemBackground), for: .navigationBar)
             .toolbarBackgroundVisibility(.visible, for: .navigationBar)
@@ -96,27 +76,10 @@ struct ViewBatch: View {
                     }
                 }
             }
-            .onAppear {
-                self.name = batch.name
-                self.numberOfAnimals = String(batch.numberOfAnimals)
-                self.entryDate = batch.entryDate
-                self.exitDate = batch.exitDate
-                self.entranceWeight = String(batch.entraceWeight)
-                self.aquisitionCost = String(batch.aquisitionCost)
-                self.salePrice = String(batch.salePrice)
-                self.foodCost = String(batch.foodCost)
-                
-                self.atualWeight = String(batch.atualWeights.last ?? batch.entraceWeight)
-                self.totalCorpseWeight = String(batch.totalCorpseWeight ?? 0)
-                self.aditionalEntrance = String(batch.aditionalEntrance ?? 0)
-                self.aditionalExit = String(batch.aditionalExit ?? 0)
-            }
             .sheet(isPresented: $addNewWeight) {
                 NewWeightBatch(batch: batch)
             }
-            .sheet(isPresented: $editBatch, onDismiss: {
-                try? modelContext.save()
-            }) {
+            .sheet(isPresented: $editBatch) {
                 UseBatch(batch: batch)
             }
         }
