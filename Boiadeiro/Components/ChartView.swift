@@ -3,9 +3,23 @@ import SwiftData
 
 struct ChartView: View {
     @Query(filter: #Predicate<Batch> { $0.isActive }) var activeBatches: [Batch]
-
+    
     var batch: Batch? {
         activeBatches.first
+    }
+    
+    private var projections: Projections? {
+        if let batch = batch {
+            return Projections(batch: batch)
+        }
+        return nil
+    }
+    
+    private var chartCalculations: ChartCalculations? {
+        if let batch = batch {
+            return ChartCalculations(batch: batch, divisions: 6)
+        }
+        return nil
     }
 
     var body: some View {
@@ -41,20 +55,22 @@ struct ChartView: View {
                     VStack(alignment: .center, spacing: 10) {
                         Text("Lucro")
                         
-                        Text("R$4893,23")
-                            .font(.title)
-                            .fontWeight(.bold)
-                        
-                        Text("+12,45%")
-                            .foregroundStyle(Color(.systemBackground))
-                            .font(.caption)
-                            .fontWeight(.bold)
-                            .padding(.vertical, 7)
-                            .padding(.horizontal, 10)
-                            .background(
-                                RoundedRectangle(cornerRadius: 58)
-                                    .foregroundStyle(.green)
-                            )
+                        if let projections = projections {
+                            Text(projections.finalProfit.formatted(.currency(code: "BRL")))
+                                .font(.title)
+                                .fontWeight(.bold)
+                            
+                            Text(projections.profitPercentage.formatted(.percent.precision(.fractionLength(2))))
+                                .foregroundStyle(Color(.systemBackground))
+                                .font(.caption)
+                                .fontWeight(.bold)
+                                .padding(.vertical, 7)
+                                .padding(.horizontal, 10)
+                                .background(
+                                    RoundedRectangle(cornerRadius: 58)
+                                        .foregroundStyle(.green)
+                                )
+                        }
                     }
                     
                     Spacer()
@@ -70,14 +86,14 @@ struct ChartView: View {
                         )
                 }
                 
-                MarkAreaChart(dados: .constant([
-                            ChartValues(date: Date().addingTimeInterval(-5*24*60*60), value: 10),
-                            ChartValues(date: Date().addingTimeInterval(-4*24*60*60), value: 30),
-                            ChartValues(date: Date().addingTimeInterval(-3*24*60*60), value: 25),
-                            ChartValues(date: Date().addingTimeInterval(-2*24*60*60), value: 40),
-                            ChartValues(date: Date().addingTimeInterval(-1*24*60*60), value: 15),
-                            ChartValues(date: Date(), value: 50),
-                        ]))
+                if let chartCalculations = chartCalculations {
+                    let _ = chartCalculations.chartData.forEach { print($0.date, " - ", $0.value) }
+                    MarkAreaChart(
+                        dados: chartCalculations.chartData,
+                        projection: chartCalculations.projectedWeights
+                    )
+                }
+
             }
             .frame(maxWidth: .infinity, alignment: .center)
             .padding()

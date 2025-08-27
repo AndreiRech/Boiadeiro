@@ -13,14 +13,20 @@ class Projections {
     }
 
     var meanFinalWeight: Double { // peso total final / quantidade
-        let total = self.batch.atualWeights.last
-            ?? self.batch.entraceWeight * 1.5 * self.totalDays
+        let latestWeight = self.batch.atualWeights.sorted(by: { $0.key > $1.key }).first?.value
+        
+        let total = latestWeight ?? self.batch.entraceWeight + (1.5 * self.totalDays * self.numberOfAnimals)
+        
         return total / self.numberOfAnimals
     }
-    
+        
     var meanCorpseWeight: Double { // peso total carcaça / quantidade
-        let total = self.batch.totalCorpseWeight
-            ?? (self.batch.atualWeights.last ?? self.batch.entraceWeight) / 2
+        let totalCorpse = self.batch.totalCorpseWeight
+        
+        let latestWeight = self.batch.atualWeights.sorted(by: { $0.key > $1.key }).first?.value
+        
+        let total = totalCorpse ?? (latestWeight ?? self.batch.entraceWeight) / 2
+        
         return total / self.numberOfAnimals
     }
     
