@@ -19,10 +19,11 @@ struct UseBatch: View {
     @State private var totalCorpseWeight: String = ""
     @State private var aditionalEntrance: String = ""
     @State private var aditionalExit: String = ""
+    @State private var latestWeightDate: Date? = nil
     
     var batch: Batch?
     var isEditing: Bool { batch != nil }
-        
+    
     var body: some View {
         NavigationStack {
             ScrollView(showsIndicators: false) {
@@ -68,35 +69,35 @@ struct UseBatch: View {
                     var isDisabled: Bool {
                         if isEditing {
                             return name.isEmpty
-                                || numberOfAnimals.isEmpty
-                                || entranceWeight.isEmpty
-                                || aquisitionCost.isEmpty
-                                || salePrice.isEmpty
-                                || foodCost.isEmpty
-                                || atualWeight.isEmpty
-                                || totalCorpseWeight.isEmpty
-                                || aditionalEntrance.isEmpty
-                                || aditionalExit.isEmpty
+                            || numberOfAnimals.isEmpty
+                            || entranceWeight.isEmpty
+                            || aquisitionCost.isEmpty
+                            || salePrice.isEmpty
+                            || foodCost.isEmpty
+                            || atualWeight.isEmpty
+                            || totalCorpseWeight.isEmpty
+                            || aditionalEntrance.isEmpty
+                            || aditionalExit.isEmpty
                         } else {
                             return name.isEmpty
-                                || numberOfAnimals.isEmpty
-                                || entranceWeight.isEmpty
+                            || numberOfAnimals.isEmpty
+                            || entranceWeight.isEmpty
                         }
                     }
                     
                     Button("Salvar") {
                         if let newNumberOfAnimals = Int(numberOfAnimals),
                            let newEntranceWeight = entranceWeight.toDouble {
-
+                            
                             if let batch,
-                                let newAquisitionCost = aquisitionCost.toDouble,
-                                let newSalePrice = salePrice.toDouble,
-                                let newFoodCost = foodCost.toDouble,
-                                let newAtualWeight = atualWeight.toDouble,
-                                let newTotalCorpseWeight = totalCorpseWeight.toDouble,
-                                let newAditionalEntrance = aditionalEntrance.toDouble,
-                                let newAditionalExit = aditionalExit.toDouble {
-
+                               let newAquisitionCost = aquisitionCost.toDouble,
+                               let newSalePrice = salePrice.toDouble,
+                               let newFoodCost = foodCost.toDouble,
+                               let newAtualWeight = atualWeight.toDouble,
+                               let newTotalCorpseWeight = totalCorpseWeight.toDouble,
+                               let newAditionalEntrance = aditionalEntrance.toDouble,
+                               let newAditionalExit = aditionalExit.toDouble {
+                                
                                 batch.name = self.name
                                 batch.numberOfAnimals = newNumberOfAnimals
                                 batch.entryDate = self.entryDate
@@ -105,7 +106,7 @@ struct UseBatch: View {
                                 batch.aquisitionCost = newAquisitionCost
                                 batch.salePrice = newSalePrice
                                 batch.foodCost = newFoodCost
-                                batch.atualWeights.append(newAtualWeight)
+                                batch.atualWeights.updateValue(newAtualWeight, forKey: self.latestWeightDate ?? Date())
                                 batch.totalCorpseWeight = newTotalCorpseWeight
                                 batch.aditionalEntrance = newAditionalEntrance
                                 batch.aditionalExit = newAditionalExit
@@ -120,13 +121,13 @@ struct UseBatch: View {
                                     salePrice: salePrice.isEmpty ? nil : salePrice.toDouble,
                                     foodCost: foodCost.isEmpty ? nil : foodCost.toDouble
                                 )
-
+                                
                                 modelContext.insert(newBatch)
                                 try? modelContext.save()
                             }
                             dismiss()
                         }
-
+                        
                     }
                     .disabled(isDisabled)
                     .fontWeight(.bold)
@@ -143,11 +144,17 @@ struct UseBatch: View {
                 self.aquisitionCost = String(batch.aquisitionCost)
                 self.salePrice = String(batch.salePrice)
                 self.foodCost = String(batch.foodCost)
-                
-                self.atualWeight = String(batch.atualWeights.last ?? batch.entraceWeight)
+                self.atualWeight = String(batch.atualWeights.sorted(by: { $0.key > $1.key }).first?.value ?? batch.entraceWeight)
                 self.totalCorpseWeight = String(batch.totalCorpseWeight ?? 0)
                 self.aditionalEntrance = String(batch.aditionalEntrance ?? 0)
                 self.aditionalExit = String(batch.aditionalExit ?? 0)
+                
+                if let latestEntry = batch.atualWeights.sorted(by: { $0.key > $1.key }).first {
+                    self.atualWeight = String(latestEntry.value)
+                    self.latestWeightDate = latestEntry.key
+                } else {
+                    self.atualWeight = String(batch.entraceWeight)
+                }
             }
         }
     }

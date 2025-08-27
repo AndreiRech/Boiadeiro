@@ -33,12 +33,9 @@ struct BatchFields: View {
             
             LimitedTextField(text: $numberOfAnimals, title: "Número de Animais", placeholder: "Ex: 12", isNumeric: true, isDisabled: isReadOnly, characterLimit: 10)
             
-            HStack(spacing: 16) {
-                LabeledDate(date: $entryDate, title: "Data Entrada", isDisabled: isReadOnly)
+            LabeledDate(date: $entryDate, title: "Data Entrada", isDisabled: isReadOnly)
                 
-                LabeledDate(date: $exitDate, title: "Data Saída", isDisabled: isReadOnly)
-                
-            }
+            LabeledDate(date: $exitDate, title: "Data Saída", isDisabled: isReadOnly)
             
             if showExtraFields {
                 HStack(spacing: 16) {

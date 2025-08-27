@@ -21,7 +21,7 @@ struct ViewBatch: View {
                     aquisitionCost: .constant(String(batch.aquisitionCost)),
                     salePrice: .constant(String(batch.salePrice)),
                     foodCost: .constant(String(batch.foodCost)),
-                    atualWeight: .constant(String(batch.atualWeights.last ?? batch.entraceWeight)),
+                    atualWeight: .constant(String(batch.atualWeights.sorted(by: { $0.key > $1.key }).first?.value ?? batch.entraceWeight)),
                     totalCorpseWeight: .constant(String(batch.totalCorpseWeight ?? 0)),
                     aditionalEntrance: .constant(String(batch.aditionalEntrance ?? 0)),
                     aditionalExit: .constant(String(batch.aditionalExit ?? 0)),

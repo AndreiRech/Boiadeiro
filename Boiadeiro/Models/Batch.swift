@@ -17,7 +17,7 @@ final class Batch: Identifiable {
     var aditionalExit: Double?
     var isActive: Bool = false
     var createdAt: Date = Date()
-    var atualWeights: [Double] = []
+    var atualWeights: [Date: Double] = [:]
     
     init(
         id: UUID = UUID(),
@@ -45,6 +45,7 @@ final class Batch: Identifiable {
         self.aquisitionCost = aquisitionCost ?? defaultAquisitionCost
         self.salePrice = salePrice ?? defaultSalePrice
         self.foodCost = foodCost ?? defaultFoodCost
+        self.atualWeights = [entryDate: entraceWeight]
     }
 }
 
