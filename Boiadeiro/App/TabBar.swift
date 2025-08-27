@@ -29,14 +29,14 @@ struct TabBar: View {
                     }
                     .tag(1)
                                 
-                    NavigationStack {
-                        Profile()
-                    }
-                    .tabItem {
-                        Image(systemName: "person.fill")
-                        Text("Profile")
-                    }
-                    .tag(2)
+//                    NavigationStack {
+//                        Profile()
+//                    }
+//                    .tabItem {
+//                        Image(systemName: "person.fill")
+//                        Text("Profile")
+//                    }
+//                    .tag(2)
                 }
             }
         }
