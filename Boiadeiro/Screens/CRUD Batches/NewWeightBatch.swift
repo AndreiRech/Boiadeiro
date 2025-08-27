@@ -14,6 +14,7 @@ struct NewWeightBatch: View {
     @State private var entranceWeight: String = ""
     @State private var atualWeight: String = ""
     @State private var newWeight: String = ""
+    @State private var date: Date = Date()
     
     var batch: Batch
     
@@ -25,6 +26,8 @@ struct NewWeightBatch: View {
                 LimitedTextField(text: $atualWeight, title: "Peso Atual", placeholder: "Ex: 2345 Kg", isNumeric: true, isDisabled: true, characterLimit: nil)
                 
                 LimitedTextField(text: $newWeight, title: "Novo Peso", placeholder: "Ex: 3456 Kg", isNumeric: true, isDisabled: false, characterLimit: 10)
+                
+                LabeledDate(date: $date, title: "Data da Pesagem", isDisabled: false)
                 
                 Spacer()
             }
@@ -51,7 +54,7 @@ struct NewWeightBatch: View {
                     
                     Button("Salvar") {
                         if let newWeightDouble = Double(newWeight) {
-                            batch.atualWeights.append(newWeightDouble)
+                            batch.atualWeights.updateValue(newWeightDouble, forKey: date)
                             try? modelContext.save()
                             dismiss()
                         }
@@ -61,7 +64,8 @@ struct NewWeightBatch: View {
             }
             .onAppear {
                 entranceWeight = String(format: "%.1f Kg", batch.entraceWeight)
-                atualWeight = String(format: "%.1f Kg", batch.atualWeights.last ?? batch.entraceWeight)
+                let latestWeightValue = batch.atualWeights.sorted(by: { $0.key > $1.key }).first?.value
+                atualWeight = String(format: "%.1f Kg", latestWeightValue ?? batch.entraceWeight)
             }
         }
     }

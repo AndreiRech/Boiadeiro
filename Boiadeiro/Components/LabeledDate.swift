@@ -14,10 +14,12 @@ struct LabeledDate: View {
     let isDisabled: Bool
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        HStack() {
             Text(title)
                 .font(.callout)
                 .fontWeight(.bold)
+            
+            Spacer()
             
             DatePicker("", selection: $date, displayedComponents: [.date])
                 .labelsHidden()
