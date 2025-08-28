@@ -1,4 +1,4 @@
-# Boiadeiro �
+# Boiadeiro 
 
 Gerencie seu rebanho de forma simples e eficiente, mesmo sem internet.
 
